@@ -299,6 +299,22 @@ Start-Sleep -Seconds 10
 # Renaming 2012 machine
 Invoke-Command -ComputerName $Win2k12vmName -ScriptBlock { Rename-Computer -NewName $using:Win2k12MachineName -Restart} -Credential $win2k12Creds
 
+#####################################################################
+# Renaming the nested VMs
+Write-Header "Renaming the nested Windows VMs"
+Invoke-Command -VMName $Win2k19vmName -ScriptBlock { Rename-Computer -newName $using:Win2k19vmName -Restart } -Credential $winCreds
+Invoke-Command -VMName $Win2k22vmName -ScriptBlock { Rename-Computer -newName $using:Win2k22vmName -Restart } -Credential $winCreds
+
+Get-VM *Win* | Wait-VM -For IPAddress
+
+Write-Host "Waiting for the nested Windows VMs to come back online...waiting for 10 seconds"
+
+Start-Sleep -Seconds 10
+
+
+#####################################################################
+
+
 # Getting the Ubuntu nested VM IP address
 $Ubuntu01VmIp = Get-VM -Name $Ubuntu01vmName | Select-Object -ExpandProperty NetworkAdapters | Select-Object -ExpandProperty IPAddresses | Select-Object -Index 0
 $Ubuntu02VmIp = Get-VM -Name $Ubuntu02vmName | Select-Object -ExpandProperty NetworkAdapters | Select-Object -ExpandProperty IPAddresses | Select-Object -Index 0
@@ -351,6 +367,27 @@ Copy-VMFile $Win2k22vmName -SourcePath "$agentScript\testDefenderForServers.cmd"
 #$cmdArguments = "/C `"$remoteScriptFile`""
 
 #Invoke-Command -VMName $Win2k19vmName -ScriptBlock { Start-Process -FilePath $Using:cmdExePath -ArgumentList $Using:cmdArguments } -Credential $winCreds
+
+# Renaming the nested linux VMs
+Write-Output "Renaming the nested Linux VMs"
+$ubuntuSession = New-SSHSession -ComputerName $Ubuntu01VmIp -Credential $linCreds -Force -WarningAction SilentlyContinue
+$Command = "sudo hostnamectl set-hostname $Ubuntu01vmName;sudo systemctl reboot"
+$(Invoke-SSHCommand -SSHSession $ubuntuSession -Command $Command -Timeout 600 -WarningAction SilentlyContinue).Output
+Restart-VM -Name $Ubuntu01vmName
+
+$ubuntuSession = New-SSHSession -ComputerName $Ubuntu02VmIp -Credential $linCreds -Force -WarningAction SilentlyContinue
+$Command = "sudo hostnamectl set-hostname $Ubuntu02vmName;sudo systemctl reboot"
+$(Invoke-SSHCommand -SSHSession $ubuntuSession -Command $Command -Timeout 600 -WarningAction SilentlyContinue).Output
+Restart-VM -Name $Ubuntu02vmName
+
+
+Get-VM *Ubuntu* | Wait-VM -For IPAddress
+
+Write-Host "Waiting for the nested Linux VMs to come back online...waiting for 10 seconds"
+
+Start-Sleep -Seconds 10
+
+#####################################################################
 
 Write-Output "Onboarding the nested Linux VMs as an Azure Arc-enabled servers"
 $ubuntuSession = New-SSHSession -ComputerName $Ubuntu01VmIp -Credential $linCreds -Force -WarningAction SilentlyContinue
