@@ -188,6 +188,17 @@ if (!([System.IO.File]::Exists($win2k19vmvhdPath) -and [System.IO.File]::Exists(
 # Create the nested VMs if not already created
 Write-Host "Create Hyper-V VMs"
 
+$Win2k19vmName = "TWT-Win2K19"
+
+$Win2k22vmName = "TWT-Win2K22"
+
+$Ubuntu01vmName = "TWT-Ubuntu-01"
+
+$Ubuntu02vmName = "TWT-Ubuntu-02"
+
+$Win2k12vmName = "JSWin2K12Base"
+$Win2k12MachineName = "TWT-Win2k12"
+
 # Check if VM already exists
 if ((Get-VM -Name $Win2k19vmName -ErrorAction SilentlyContinue).State -ne "Running") {
     Remove-VM -Name $Win2k19vmName -Force -ErrorAction SilentlyContinue
@@ -325,9 +336,9 @@ Write-Host "Onboarding Arc-enabled servers"
 
 # Onboarding the nested VMs as Azure Arc-enabled servers
 
-$Ubuntu02vmvhdPath = "${Env:ArcBoxVMDir}\${Ubuntu02vmName}.vhdx"
 Write-Output "Onboarding the nested Windows VMs as Azure Arc-enabled servers"
 Invoke-Command -VMName $Win2k19vmName -ScriptBlock { powershell -File $Using:nestedVMArcBoxDir\installArcAgent.ps1  -accessToken $Using:accessToken, -spnTenantId $Using:spnTenantId, -subscriptionId $Using:subscriptionId, -resourceGroup $Using:resourceGroup, -azureLocation $Using:azureLocation } -Credential $winCreds
+Invoke-Command -VMName $Win2k22vmName -ScriptBlock { powershell -File $Using:nestedVMArcBoxDir\installArcAgent.ps1  -accessToken $Using:accessToken, -spnTenantId $Using:spnTenantId, -subscriptionId $Using:subscriptionId, -resourceGroup $Using:resourceGroup, -azureLocation $Using:azureLocation } -Credential $winCreds
 Invoke-Command -ComputerName $Win2k12vmName -ScriptBlock { powershell -File $Using:nestedVMArcBoxDir\installArcAgent.ps1 -accessToken $Using:accessToken, -spnTenantId $Using:spnTenantId, -subscriptionId $Using:subscriptionId, -resourceGroup $Using:resourceGroup, -azureLocation $Using:azureLocation } -Credential $win2k12Creds
 
 # Test Defender for Servers
@@ -343,6 +354,13 @@ Copy-VMFile $Win2k22vmName -SourcePath "$agentScript\testDefenderForServers.cmd"
 
 Write-Output "Onboarding the nested Linux VMs as an Azure Arc-enabled servers"
 $ubuntuSession = New-SSHSession -ComputerName $Ubuntu01VmIp -Credential $linCreds -Force -WarningAction SilentlyContinue
+$Command = "sudo sh /home/$nestedLinuxUsername/installArcAgentModifiedUbuntu.sh"
+$(Invoke-SSHCommand -SSHSession $ubuntuSession -Command $Command -Timeout 600 -WarningAction SilentlyContinue).Output
+$command = "curl -o ~/Downloads/eicar.com.txt"
+$(Invoke-SSHCommand -SSHSession $ubuntuSession -Command $Command -Timeout 600 -WarningAction SilentlyContinue).Output
+
+Write-Output "Onboarding the nested Linux VMs as an Azure Arc-enabled servers"
+$ubuntuSession = New-SSHSession -ComputerName $Ubuntu02VmIp -Credential $linCreds -Force -WarningAction SilentlyContinue
 $Command = "sudo sh /home/$nestedLinuxUsername/installArcAgentModifiedUbuntu.sh"
 $(Invoke-SSHCommand -SSHSession $ubuntuSession -Command $Command -Timeout 600 -WarningAction SilentlyContinue).Output
 $command = "curl -o ~/Downloads/eicar.com.txt"
