@@ -188,16 +188,27 @@ if (!([System.IO.File]::Exists($win2k19vmvhdPath) -and [System.IO.File]::Exists(
 # Create the nested VMs if not already created
 Write-Host "Create Hyper-V VMs"
 
-$Win2k19vmName = "TWT-Win2K19"
+# $Win2k19vmName = "TWT-Win2K19"
 
-$Win2k22vmName = "TWT-Win2K22"
+# $Win2k22vmName = "TWT-Win2K22"
 
-$Ubuntu01vmName = "TWT-Ubuntu-01"
+# $Ubuntu01vmName = "TWT-Ubuntu-01"
 
-$Ubuntu02vmName = "TWT-Ubuntu-02"
+# $Ubuntu02vmName = "TWT-Ubuntu-02"
 
-$Win2k12vmName = "JSWin2K12Base"
-$Win2k12MachineName = "TWT-Win2k12"
+# $Win2k12vmName = "JSWin2K12Base"
+# $Win2k12MachineName = "TWT-Win2k12"
+
+$Win2k19vmName = "twt-app-01"
+
+$Win2k22vmName = "twt-app-02"
+
+$Ubuntu01vmName = "twt-web-01"
+
+$Ubuntu02vmName = "twt-web-02"
+
+$Win2k12vmName = "jswin2k12base"
+$Win2k12MachineName = "twt-win2k12"
 
 # Check if VM already exists
 if ((Get-VM -Name $Win2k19vmName -ErrorAction SilentlyContinue).State -ne "Running") {
