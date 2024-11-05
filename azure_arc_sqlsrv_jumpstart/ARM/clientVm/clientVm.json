@@ -56,7 +56,7 @@
         "resourceTags": {
             "type": "object",
             "defaultValue": {
-                "Project": "jumpstart_arcbox_levelup"
+                "Project": "tailwind_traders"
             }
         },
         "spnClientId": {

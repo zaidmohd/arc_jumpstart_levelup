@@ -52,7 +52,7 @@ var policies = [
         value: 'Project'
       }
       tagValue: {
-        value: 'jumpstart_arcbox'
+        value: 'tailwind_traders'
       }
     }
   }
@@ -75,7 +75,7 @@ resource taggingPolicyAssignment 'Microsoft.Authorization/policyAssignments@2022
         value: 'Project'
       }
       tagValue: {
-        value: 'jumpstart_arcbox'
+        value: 'tailwind_traders'
       }
     }
   }
