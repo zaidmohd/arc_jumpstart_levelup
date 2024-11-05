@@ -384,12 +384,12 @@ Write-Output "Renaming the nested Linux VMs"
 $ubuntuSession = New-SSHSession -ComputerName $Ubuntu01VmIp -Credential $linCreds -Force -WarningAction SilentlyContinue
 $Command = "sudo hostnamectl set-hostname $Ubuntu01vmName;sudo systemctl reboot"
 $(Invoke-SSHCommand -SSHSession $ubuntuSession -Command $Command -Timeout 600 -WarningAction SilentlyContinue).Output
-Restart-VM -Name $Ubuntu01vmName
+Restart-VM -Name $Ubuntu01vmName -Force
 
 $ubuntuSession = New-SSHSession -ComputerName $Ubuntu02VmIp -Credential $linCreds -Force -WarningAction SilentlyContinue
 $Command = "sudo hostnamectl set-hostname $Ubuntu02vmName;sudo systemctl reboot"
 $(Invoke-SSHCommand -SSHSession $ubuntuSession -Command $Command -Timeout 600 -WarningAction SilentlyContinue).Output
-Restart-VM -Name $Ubuntu02vmName
+Restart-VM -Name $Ubuntu02vmName -Force
 
 
 Get-VM *Ubuntu* | Wait-VM -For IPAddress
