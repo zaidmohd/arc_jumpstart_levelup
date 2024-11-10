@@ -177,7 +177,7 @@
             },
             "windowsAdminUsername": {
               "type": "string",
-              "defaultValue": "arcdemo",
+              "defaultValue": "zaid",
               "metadata": {
                 "description": "Username for the Virtual Machine"
               }
