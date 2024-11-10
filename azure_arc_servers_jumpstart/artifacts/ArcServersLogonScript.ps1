@@ -201,7 +201,7 @@ Write-Host "Create Hyper-V VMs"
 
 $Win2k19vmName = "twt-app-01"
 
-$Win2k22vmName = "twt-app-02"
+$Win2k22vmName = "twt-dc-01"
 
 $Ubuntu01vmName = "twt-web-01"
 
