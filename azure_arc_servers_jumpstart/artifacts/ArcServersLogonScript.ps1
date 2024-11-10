@@ -288,7 +288,7 @@ Set-Content -Path $file -Value $hostfile -Force
 
 Write-Host "Creating  demo VM Credentials"
 # Hard-coded username and password for the nested demo VMs
-$nestedLinuxUsername = "jumpstart"
+$nestedLinuxUsername = "zaid"
 $nestedLinuxPassword = "JS123!!"
 
 # Create Linux credential object
@@ -459,22 +459,22 @@ $ubuntuSession = New-SSHSession -ComputerName $Ubuntu01VmIp -Credential $linCred
 $Command = "sudo pwsh -command 'Install-WSMan'"
 $(Invoke-SSHCommand -SSHSession $ubuntuSession -Command $Command -Timeout 600 -WarningAction SilentlyContinue).Output
 
-#---
-Write-Host "Assigning Data collection rules to Arc-enabled machines"
-$windowsArcMachine = (Get-AzConnectedMachine -ResourceGroupName $resourceGroup -Name $Win2k19vmName).Id
-$linuxArcMachine = (Get-AzConnectedMachine -ResourceGroupName $resourceGroup -Name $Ubuntu01vmName).Id
-az monitor data-collection rule association create --name "vmInsighitsWindows" --rule-id $vmInsightsDCR --resource $windowsArcMachine --only-show-errors
-az monitor data-collection rule association create --name "vmInsighitsLinux" --rule-id $vmInsightsDCR --resource $LinuxArcMachine --only-show-errors
-az monitor data-collection rule association create --name "changeTrackingWindows" --rule-id $changeTrackingDCR --resource $windowsArcMachine --only-show-errors
-az monitor data-collection rule association create --name "changeTrackingLinux" --rule-id $changeTrackingDCR --resource $LinuxArcMachine --only-show-errors
+# #---
+# Write-Host "Assigning Data collection rules to Arc-enabled machines"
+# $windowsArcMachine = (Get-AzConnectedMachine -ResourceGroupName $resourceGroup -Name $Win2k19vmName).Id
+# $linuxArcMachine = (Get-AzConnectedMachine -ResourceGroupName $resourceGroup -Name $Ubuntu01vmName).Id
+# az monitor data-collection rule association create --name "vmInsighitsWindows" --rule-id $vmInsightsDCR --resource $windowsArcMachine --only-show-errors
+# az monitor data-collection rule association create --name "vmInsighitsLinux" --rule-id $vmInsightsDCR --resource $LinuxArcMachine --only-show-errors
+# az monitor data-collection rule association create --name "changeTrackingWindows" --rule-id $changeTrackingDCR --resource $windowsArcMachine --only-show-errors
+# az monitor data-collection rule association create --name "changeTrackingLinux" --rule-id $changeTrackingDCR --resource $LinuxArcMachine --only-show-errors
 
 Write-Host "Installing the AMA agent on the Arc-enabled machines"
 az connectedmachine extension create --name AzureMonitorWindowsAgent --publisher Microsoft.Azure.Monitor --type AzureMonitorWindowsAgent --machine-name $Win2k19vmName --resource-group $resourceGroup --location $azureLocation --enable-auto-upgrade true --no-wait
 az connectedmachine extension create --name AzureMonitorLinuxAgent --publisher Microsoft.Azure.Monitor --type AzureMonitorLinuxAgent --machine-name $Ubuntu01vmName --resource-group $resourceGroup --location $azureLocation --enable-auto-upgrade true --no-wait
 
-Write-Host "Installing the changeTracking agent on the Arc-enabled machines"
-az connectedmachine extension create --name ChangeTracking-Windows --publisher Microsoft.Azure.ChangeTrackingAndInventory --type-handler-version 2.20 --type ChangeTracking-Windows --machine-name $Win2k19vmName --resource-group $resourceGroup  --location $azureLocation --enable-auto-upgrade --no-wait
-az connectedmachine extension create --name ChangeTracking-Linux --publisher Microsoft.Azure.ChangeTrackingAndInventory --type-handler-version 2.20 --type ChangeTracking-Linux --machine-name $Ubuntu01vmName --resource-group $resourceGroup  --location $azureLocation --enable-auto-upgrade --no-wait
+# Write-Host "Installing the changeTracking agent on the Arc-enabled machines"
+# az connectedmachine extension create --name ChangeTracking-Windows --publisher Microsoft.Azure.ChangeTrackingAndInventory --type-handler-version 2.20 --type ChangeTracking-Windows --machine-name $Win2k19vmName --resource-group $resourceGroup  --location $azureLocation --enable-auto-upgrade --no-wait
+# az connectedmachine extension create --name ChangeTracking-Linux --publisher Microsoft.Azure.ChangeTrackingAndInventory --type-handler-version 2.20 --type ChangeTracking-Linux --machine-name $Ubuntu01vmName --resource-group $resourceGroup  --location $azureLocation --enable-auto-upgrade --no-wait
 
 Write-Host "Installing the Azure Update Manager agent on the Arc-enabled machines"
 az connectedmachine assess-patches --resource-group $resourceGroup --name $Win2k19vmName --no-wait
@@ -499,40 +499,40 @@ az connectedmachine assess-patches --resource-group $resourceGroup --name $Ubunt
 #$patchPayload = ConvertTo-Json $patch 
 #Invoke-AzRestMethod -Method PUT -Path /subscriptions/$subscriptionId/resourceGroups/$resourceGroup/providers/Microsoft.HybridCompute/machines/$Win2k19vmName/providers/Microsoft.HybridConnectivity/endpoints/default/serviceconfigurations/WAC?api-version=2023-03-15 -Payload $patchPayload
 
-Write-Host "Installing the dependencyAgent extension on the Arc-enabled windows machine"
-$dependencyAgentSetting = '{\"enableAMA\":\"true\"}'
-az connectedmachine extension create --name DependencyAgent --publisher Microsoft.Azure.Monitoring.DependencyAgent --type-handler-version 9.10 --type DependencyAgentWindows --machine-name $Win2k19vmName --settings $dependencyAgentSetting --resource-group $resourceGroup --location $azureLocation --enable-auto-upgrade --no-wait
+# Write-Host "Installing the dependencyAgent extension on the Arc-enabled windows machine"
+# $dependencyAgentSetting = '{\"enableAMA\":\"true\"}'
+# az connectedmachine extension create --name DependencyAgent --publisher Microsoft.Azure.Monitoring.DependencyAgent --type-handler-version 9.10 --type DependencyAgentWindows --machine-name $Win2k19vmName --settings $dependencyAgentSetting --resource-group $resourceGroup --location $azureLocation --enable-auto-upgrade --no-wait
 
-Write-Host "Enabling SSH access to Arc-enabled servers"
-$VMs = @("ArcBox-Ubuntu-01", "ArcBox-Win2K19")
-$VMs | ForEach-Object -Parallel {
-    $spnTenantId  =  $Using:spnTenantId
-    $subscriptionId  =  $Using:subscriptionId
-    $resourceGroup  =  $Using:resourceGroup
+# Write-Host "Enabling SSH access to Arc-enabled servers"
+# $VMs = @("ArcBox-Ubuntu-01", "ArcBox-Win2K19")
+# $VMs | ForEach-Object -Parallel {
+#     $spnTenantId  =  $Using:spnTenantId
+#     $subscriptionId  =  $Using:subscriptionId
+#     $resourceGroup  =  $Using:resourceGroup
 
-    $null = Connect-AzAccount -Identity -Tenant $spntenantId -Subscription $subscriptionId -Scope Process -WarningAction SilentlyContinue
-    $null = Select-AzSubscription -SubscriptionId $subscriptionId
+#     $null = Connect-AzAccount -Identity -Tenant $spntenantId -Subscription $subscriptionId -Scope Process -WarningAction SilentlyContinue
+#     $null = Select-AzSubscription -SubscriptionId $subscriptionId
 
-    $vm = $PSItem
-    $connectedMachine = Get-AzConnectedMachine -Name $vm -ResourceGroupName $resourceGroup -SubscriptionId $subscriptionId
+#     $vm = $PSItem
+#     $connectedMachine = Get-AzConnectedMachine -Name $vm -ResourceGroupName $resourceGroup -SubscriptionId $subscriptionId
 
-    $connectedMachineEndpoint = (Invoke-AzRestMethod -Method get -Path "$($connectedMachine.Id)/providers/Microsoft.HybridConnectivity/endpoints/default?api-version=2023-03-15").Content | ConvertFrom-Json
+#     $connectedMachineEndpoint = (Invoke-AzRestMethod -Method get -Path "$($connectedMachine.Id)/providers/Microsoft.HybridConnectivity/endpoints/default?api-version=2023-03-15").Content | ConvertFrom-Json
 
-    if (-not ($connectedMachineEndpoint.properties | Where-Object { $_.type -eq "default" -and $_.provisioningState -eq "Succeeded" })) {
-        Write-Output "Creating default endpoint for $($connectedMachine.Name)"
-        $null = Invoke-AzRestMethod -Method put -Path "$($connectedMachine.Id)/providers/Microsoft.HybridConnectivity/endpoints/default?api-version=2023-03-15" -Payload '{"properties": {"type": "default"}}'
-    }
-    $connectedMachineSshEndpoint = (Invoke-AzRestMethod -Method get -Path "$($connectedMachine.Id)/providers/Microsoft.HybridConnectivity/endpoints/default/serviceconfigurations/SSH?api-version=2023-03-15").Content | ConvertFrom-Json
+#     if (-not ($connectedMachineEndpoint.properties | Where-Object { $_.type -eq "default" -and $_.provisioningState -eq "Succeeded" })) {
+#         Write-Output "Creating default endpoint for $($connectedMachine.Name)"
+#         $null = Invoke-AzRestMethod -Method put -Path "$($connectedMachine.Id)/providers/Microsoft.HybridConnectivity/endpoints/default?api-version=2023-03-15" -Payload '{"properties": {"type": "default"}}'
+#     }
+#     $connectedMachineSshEndpoint = (Invoke-AzRestMethod -Method get -Path "$($connectedMachine.Id)/providers/Microsoft.HybridConnectivity/endpoints/default/serviceconfigurations/SSH?api-version=2023-03-15").Content | ConvertFrom-Json
 
-    if (-not ($connectedMachineSshEndpoint.properties | Where-Object { $_.serviceName -eq "SSH" -and $_.provisioningState -eq "Succeeded" })) {
-        Write-Output "Enabling SSH on $($connectedMachine.Name)"
-        $null = Invoke-AzRestMethod -Method put -Path "$($connectedMachine.Id)/providers/Microsoft.HybridConnectivity/endpoints/default/serviceconfigurations/SSH?api-version=2023-03-15" -Payload '{"properties": {"serviceName": "SSH", "port": 22}}'
-    }
-    else {
-        Write-Output "SSH already enabled on $($connectedMachine.Name)"
-    }
+#     if (-not ($connectedMachineSshEndpoint.properties | Where-Object { $_.serviceName -eq "SSH" -and $_.provisioningState -eq "Succeeded" })) {
+#         Write-Output "Enabling SSH on $($connectedMachine.Name)"
+#         $null = Invoke-AzRestMethod -Method put -Path "$($connectedMachine.Id)/providers/Microsoft.HybridConnectivity/endpoints/default/serviceconfigurations/SSH?api-version=2023-03-15" -Payload '{"properties": {"serviceName": "SSH", "port": 22}}'
+#     }
+#     else {
+#         Write-Output "SSH already enabled on $($connectedMachine.Name)"
+#     }
 
-}
+# }
 
 # Removing the LogonScript Scheduled Task so it won't run on next reboot
 Write-Host "Removing Logon Task"
