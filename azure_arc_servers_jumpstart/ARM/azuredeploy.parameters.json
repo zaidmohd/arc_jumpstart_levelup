@@ -6,7 +6,7 @@
             "value": "<your spn tenant id>"
         },
         "windowsAdminUsername": {
-            "value": "zaid"
+            "value": "arcdemo"
         },
         "windowsAdminPassword": {
             "value": "<your windows admin password>"
