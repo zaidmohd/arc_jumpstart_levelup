@@ -392,7 +392,7 @@ $(Invoke-SSHCommand -SSHSession $ubuntuSession -Command $Command -Timeout 600 -W
 Restart-VM -Name $Ubuntu02vmName -Force
 
 
-Get-VM *Ubuntu* | Wait-VM -For IPAddress
+Get-VM *web* | Wait-VM -For IPAddress
 
 Write-Host "Waiting for the nested Linux VMs to come back online...waiting for 10 seconds"
 
