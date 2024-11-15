@@ -327,6 +327,9 @@ Start-Sleep -Seconds 10
 
 #####################################################################
 
+$Ubuntu01vmName = "twt-web-01"
+
+$Ubuntu02vmName = "twt-web-02"
 
 # Getting the Ubuntu nested VM IP address
 $Ubuntu01VmIp = Get-VM -Name $Ubuntu01vmName | Select-Object -ExpandProperty NetworkAdapters | Select-Object -ExpandProperty IPAddresses | Select-Object -Index 0
@@ -384,14 +387,14 @@ Copy-VMFile $Win2k22vmName -SourcePath "$agentScript\testDefenderForServers.cmd"
 # Renaming the nested linux VMs
 Write-Output "Renaming the nested Linux VMs"
 $ubuntuSession = New-SSHSession -ComputerName $Ubuntu01VmIp -Credential $linCreds -Force -WarningAction SilentlyContinue
-$Command = "sudo hostnamectl set-hostname $Ubuntu01vmName;sudo systemctl reboot"
+$Command = "sudo hostnamectl set-hostname 'twt-web-01';sudo systemctl reboot"
 $(Invoke-SSHCommand -SSHSession $ubuntuSession -Command $Command -Timeout 600 -WarningAction SilentlyContinue).Output
-Restart-VM -Name $Ubuntu01vmName -Force
+Restart-VM -Name 'twt-web-01' -Force
 
 $ubuntuSession = New-SSHSession -ComputerName $Ubuntu02VmIp -Credential $linCreds -Force -WarningAction SilentlyContinue
-$Command = "sudo hostnamectl set-hostname $Ubuntu02vmName;sudo systemctl reboot"
+$Command = "sudo hostnamectl set-hostname 'twt-web-02';sudo systemctl reboot"
 $(Invoke-SSHCommand -SSHSession $ubuntuSession -Command $Command -Timeout 600 -WarningAction SilentlyContinue).Output
-Restart-VM -Name $Ubuntu02vmName -Force
+Restart-VM -Name 'twt-web-02' -Force
 
 
 Get-VM *web* | Wait-VM -For IPAddress
