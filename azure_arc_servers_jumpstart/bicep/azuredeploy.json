@@ -213,7 +213,7 @@
             "resourceTags": {
               "type": "object",
               "defaultValue": {
-                "Project": "ignite"
+                "Project": "tailwind_traders"
               }
             },
             "spnClientId": {
@@ -4576,7 +4576,7 @@
                     "value": "Project"
                   },
                   "tagValue": {
-                    "value": "ignite"
+                    "value": "tailwind_traders"
                   }
                 }
               }
@@ -4600,7 +4600,7 @@
                     "value": "Project"
                   },
                   "tagValue": {
-                    "value": "ignite"
+                    "value": "tailwind_traders"
                   }
                 }
               }

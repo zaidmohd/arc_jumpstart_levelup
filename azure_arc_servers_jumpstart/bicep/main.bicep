@@ -20,7 +20,7 @@ param logAnalyticsWorkspaceName string
 param githubAccount string = 'zaidmohd'
 
 @description('Target GitHub branch')
-param githubBranch string = 'ignite'
+param githubBranch string = 'tailwind_traders'
 
 @description('Choice to deploy Bastion to connect to the client VM')
 param deployBastion bool = false
