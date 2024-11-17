@@ -52,7 +52,7 @@ var policies = [
         value: 'Project'
       }
       tagValue: {
-        value: 'tailwind_traders'
+        value: 'ignite'
       }
     }
   }
@@ -75,7 +75,7 @@ resource taggingPolicyAssignment 'Microsoft.Authorization/policyAssignments@2022
         value: 'Project'
       }
       tagValue: {
-        value: 'tailwind_traders'
+        value: 'ignite'
       }
     }
   }

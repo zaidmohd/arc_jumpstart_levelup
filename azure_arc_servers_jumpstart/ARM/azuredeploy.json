@@ -219,7 +219,7 @@
             "resourceTags": {
               "type": "object",
               "defaultValue": {
-                "Project": "tailwind_traders"
+                "Project": "ignite"
               }
             },
             "spnAuthority": {
@@ -4625,7 +4625,7 @@
                     "value": "Project"
                   },
                   "tagValue": {
-                    "value": "tailwind_traders"
+                    "value": "ignite"
                   }
                 }
               }
@@ -4649,7 +4649,7 @@
                     "value": "Project"
                   },
                   "tagValue": {
-                    "value": "tailwind_traders"
+                    "value": "ignite"
                   }
                 }
               }

@@ -23,7 +23,7 @@ param location string = resourceGroup().location
 param subnetId string
 
 param resourceTags object = {
-  Project: 'tailwind_traders'
+  Project: 'ignite'
 }
 
 param spnAuthority string = environment().authentication.loginEndpoint

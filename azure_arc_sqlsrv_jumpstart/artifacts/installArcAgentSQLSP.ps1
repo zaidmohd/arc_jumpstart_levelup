@@ -17,7 +17,7 @@ Start-Transcript -Path $ArcBoxLogsDir\installArcAgentSQL.log
 $ErrorActionPreference = 'SilentlyContinue'
 
 # These settings will be replaced by the portal when the script is generated
-$resourceTags= "Project=tailwind_traders"
+$resourceTags= "Project=ignite"
 $licenseType = "PAYG"
 $currentDir = Get-Location
 $unattended = $spnClientId -And $spnTenantId -And $spnClientSecret
